@@ -1,0 +1,19 @@
+body {
+    background-color: #f8f9fa;
+}
+
+#lock-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #f8f9fa;
+    z-index: 1000;
+}
+
+#main-content {
+    max-width: 800px;
+}
+
+#share-link-container {
+   flex: 1 1 300px;
+}
