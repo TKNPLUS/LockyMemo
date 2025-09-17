@@ -1,4 +1,3 @@
-'''
 const lockScreen = document.getElementById('lock-screen');
 const mainContent = document.getElementById('main-content');
 const passwordInput = document.getElementById('password-input');
@@ -11,6 +10,11 @@ const initialPrompt = document.getElementById('initial-prompt');
 const shareLinkContainer = document.getElementById('share-link-container');
 const shareLinkInput = document.getElementById('share-link-input');
 const copyLinkButton = document.getElementById('copy-link-button');
+const setPasswordGroup = document.getElementById('set-password-group');
+const setPasswordInput = document.getElementById('set-password-input');
+const setPasswordConfirm = document.getElementById('set-password-confirm');
+const setPasswordButton = document.getElementById('set-password-button');
+const inputPasswordGroup = document.getElementById('input-password-group');
 
 let currentDecryptedMemo = '';
 let isLocked = true;
@@ -89,13 +93,23 @@ async function decrypt(encryptedDataB64, password) {
 
 // --- UI操作 ---
 
-function showLockScreen() {
+function showLockScreen(isFirst) {
     isLocked = true;
     mainContent.classList.add('d-none');
     lockScreen.classList.remove('d-none');
-    passwordInput.value = '';
-    passwordInput.focus();
     errorMessage.textContent = '';
+    if (isFirst) {
+        setPasswordGroup.style.display = 'block';
+        inputPasswordGroup.style.display = 'none';
+        setPasswordInput.value = '';
+        setPasswordConfirm.value = '';
+        setPasswordInput.focus();
+    } else {
+        setPasswordGroup.style.display = 'none';
+        inputPasswordGroup.style.display = 'flex';
+        passwordInput.value = '';
+        passwordInput.focus();
+    }
 }
 
 function unlockApp(memoContent) {
@@ -108,6 +122,27 @@ function unlockApp(memoContent) {
 }
 
 // --- イベントリスナー ---
+
+// パスワード設定ボタン
+setPasswordButton.addEventListener('click', async () => {
+    const pass = setPasswordInput.value;
+    const confirm = setPasswordConfirm.value;
+    if (!pass || !confirm) {
+        errorMessage.textContent = 'パスワードを2回入力してください。';
+        return;
+    }
+    if (pass !== confirm) {
+        errorMessage.textContent = 'パスワードが一致しません。';
+        return;
+    }
+    // 新規作成として保存
+    const encryptedMemo = await encrypt('', pass);
+    localStorage.setItem('lockyMemo', encryptedMemo);
+    window.location.hash = encryptedMemo;
+    showLockScreen(false);
+    initialPrompt.innerHTML = '<p>メモを復元するにはパスワードを入力してください。</p>';
+    alert('パスワードを設定しました。');
+});
 
 // ロックボタン
 lockButton.addEventListener('click', () => {
@@ -206,9 +241,9 @@ window.addEventListener('load', () => {
     const encryptedMemo = window.location.hash.substring(1) || localStorage.getItem('lockyMemo');
     if (encryptedMemo) {
         initialPrompt.innerHTML = '<p>メモを復元するにはパスワードを入力してください。</p>';
+        showLockScreen(false);
     } else {
-        initialPrompt.innerHTML = '<p>新しいメモを作成します。パスワードを設定して「開く」を押してください。</p>';
+        initialPrompt.innerHTML = '<p>新しいメモを作成します。パスワードを設定してください。</p>';
+        showLockScreen(true);
     }
-    showLockScreen();
 });
-''

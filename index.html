@@ -15,7 +15,14 @@
             <div id="initial-prompt">
                 <p>メモを復元または新規作成します。</p>
             </div>
-            <div class="input-group mb-3" style="max-width: 300px;">
+            <!-- パスワード設定フォーム -->
+            <div id="set-password-group" class="mb-3" style="max-width: 300px; display: none;">
+                <input type="password" id="set-password-input" class="form-control mb-2" placeholder="新しいパスワードを設定">
+                <input type="password" id="set-password-confirm" class="form-control mb-2" placeholder="パスワード再入力">
+                <button id="set-password-button" class="btn btn-success w-100">パスワードを設定</button>
+            </div>
+            <!-- パスワード入力フォーム -->
+            <div id="input-password-group" class="input-group mb-3" style="max-width: 300px;">
                 <input type="password" id="password-input" class="form-control" placeholder="パスワードを入力">
                 <button id="unlock-button" class="btn btn-primary">開く</button>
             </div>
