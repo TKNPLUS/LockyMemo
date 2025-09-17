@@ -15,9 +15,12 @@ const setPasswordInput = document.getElementById('set-password-input');
 const setPasswordConfirm = document.getElementById('set-password-confirm');
 const setPasswordButton = document.getElementById('set-password-button');
 const inputPasswordGroup = document.getElementById('input-password-group');
+const resetPasswordButton = document.getElementById('reset-password-button');
+const bgLockToggle = document.getElementById('bg-lock-toggle');
 
 let currentDecryptedMemo = '';
 let isLocked = true;
+let bgLockEnabled = true;
 
 // --- 暗号化/復号 ---
 
@@ -112,15 +115,6 @@ function showLockScreen(isFirst) {
     }
 }
 
-function unlockApp(memoContent) {
-    isLocked = false;
-    currentDecryptedMemo = memoContent;
-    memoArea.value = currentDecryptedMemo;
-    lockScreen.classList.add('d-none');
-    mainContent.classList.remove('d-none');
-    shareLinkContainer.style.display = 'none';
-}
-
 // --- イベントリスナー ---
 
 // パスワード設定ボタン
@@ -142,6 +136,22 @@ setPasswordButton.addEventListener('click', async () => {
     showLockScreen(false);
     initialPrompt.innerHTML = '<p>メモを復元するにはパスワードを入力してください。</p>';
     alert('パスワードを設定しました。');
+});
+
+// パスワードリセットボタン
+resetPasswordButton.addEventListener('click', () => {
+    if (confirm('本当にパスワードとメモをリセットしますか？（全てのメモが消去されます）')) {
+        localStorage.removeItem('lockyMemo');
+        window.location.hash = '';
+        initialPrompt.innerHTML = '<p>新しいメモを作成します。パスワードを設定してください。</p>';
+        showLockScreen(true);
+        alert('パスワードとメモをリセットしました。');
+    }
+});
+
+// バックグラウンドロックトグル
+bgLockToggle.addEventListener('change', () => {
+    bgLockEnabled = bgLockToggle.checked;
 });
 
 // ロックボタン
@@ -223,21 +233,18 @@ passwordInput.addEventListener('keyup', (e) => {
 
 // ページの表示/非表示を検知して自動ロック
 document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && !isLocked) {
-        // 少し遅延させて、意図しないロックを防ぐ
-        setTimeout(() => {
-            if (document.visibilityState === 'visible') {
-                 memoArea.value = '';
-                 currentDecryptedMemo = '';
-                 initialPrompt.innerHTML = '<p>再度開くにはパスワードを入力してください。</p>';
-                 showLockScreen();
-            }
-        }, 500);
+    if (bgLockEnabled && document.visibilityState === 'hidden' && !isLocked) {
+        // バックグラウンドに移動した瞬間にロック
+        memoArea.value = '';
+        currentDecryptedMemo = '';
+        initialPrompt.innerHTML = '<p>再度開くにはパスワードを入力してください。</p>';
+        showLockScreen(false);
     }
 });
 
 // --- 初期化処理 ---
 window.addEventListener('load', () => {
+    bgLockEnabled = bgLockToggle.checked;
     const encryptedMemo = window.location.hash.substring(1) || localStorage.getItem('lockyMemo');
     if (encryptedMemo) {
         initialPrompt.innerHTML = '<p>メモを復元するにはパスワードを入力してください。</p>';

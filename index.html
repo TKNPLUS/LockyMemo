@@ -26,6 +26,13 @@
                 <input type="password" id="password-input" class="form-control" placeholder="パスワードを入力">
                 <button id="unlock-button" class="btn btn-primary">開く</button>
             </div>
+            <!-- パスワードリセットボタン -->
+            <button id="reset-password-button" class="btn btn-outline-danger btn-sm mb-2">パスワードをリセット</button>
+            <!-- バックグラウンドロックトグル -->
+            <div class="form-check form-switch d-flex justify-content-center mb-2">
+                <input class="form-check-input" type="checkbox" id="bg-lock-toggle" checked>
+                <label class="form-check-label ms-2" for="bg-lock-toggle">バックグラウンド時に自動ロック</label>
+            </div>
             <p id="error-message" class="text-danger"></p>
         </div>
     </div>
