@@ -1,3 +1,15 @@
+// ロック解除時にmain画面のボタン類を表示、ロック画面では非表示
+function unlockApp(memo) {
+    isLocked = false;
+    lockScreen.classList.add('d-none');
+    mainContent.classList.remove('d-none');
+    memoArea.value = memo;
+    currentDecryptedMemo = memo;
+    errorMessage.textContent = '';
+    // メイン画面でリセット・トグルを表示
+    if (resetPasswordButton) resetPasswordButton.style.display = '';
+    if (bgLockToggle) bgLockToggle.closest('.form-check')?.classList.remove('d-none');
+}
 const lockScreen = document.getElementById('lock-screen');
 const mainContent = document.getElementById('main-content');
 const passwordInput = document.getElementById('password-input');
@@ -101,6 +113,9 @@ function showLockScreen(isFirst) {
     mainContent.classList.add('d-none');
     lockScreen.classList.remove('d-none');
     errorMessage.textContent = '';
+    // ロック画面ではリセット・トグルを非表示
+    if (resetPasswordButton) resetPasswordButton.style.display = 'none';
+    if (bgLockToggle) bgLockToggle.closest('.form-check')?.classList.add('d-none');
     if (isFirst) {
         setPasswordGroup.style.display = 'block';
         inputPasswordGroup.style.display = 'none';
